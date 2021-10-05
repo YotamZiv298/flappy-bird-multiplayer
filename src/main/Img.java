@@ -11,37 +11,37 @@ import javax.imageio.ImageIO;
 
 public class Img {
 
-	protected String _imagePath;
-	protected BufferedImage _image;
+    protected String _imagePath;
+    protected BufferedImage _image;
 
-	protected int _x;
-	protected int _y;
+    protected int _x;
+    protected int _y;
 
-	protected int _width;
-	protected int _height;
+    protected int _width;
+    protected int _height;
 
-	protected ImageObserver _observer;
+    protected ImageObserver _observer;
 
-	public Img(String imagePath, int x, int y, int width, int height, ImageObserver observer) {
-		_imagePath = imagePath;
+    public Img(String imagePath, int x, int y, int width, int height, ImageObserver observer) {
+        _imagePath = imagePath;
 
-		try {
-			_image = ImageIO.read(new File(_imagePath));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        try {
+            _image = ImageIO.read(new File(_imagePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		_x = x;
-		_y = y;
+        _x = x;
+        _y = y;
 
-		_width = width;
-		_height = height;
+        _width = width;
+        _height = height;
 
-		_observer = observer;
-	}
+        _observer = observer;
+    }
 
-	public void draw(Graphics g) {
-		g.drawImage(_image, _x, _y, _width, _height, _observer);
-	}
+    public void draw(Graphics g) {
+        g.drawImage(_image, _x, _y, _width, _height, _observer);
+    }
 
 }
