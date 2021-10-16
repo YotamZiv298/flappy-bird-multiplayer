@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import main.GamePanel;
+import state.game.GamePanel;
 import main.Main;
 import state.settings.Settings;
 
