@@ -117,7 +117,7 @@ public class Bird extends Thread {
         super.run();
 
         while (_alive) {
-            System.out.format("|%d|%d| %b", _x, _y, _alive);
+            System.out.format("X:%d | Y:%d", _x, _y);
             System.out.println();
 
             _velY += _gravity;
