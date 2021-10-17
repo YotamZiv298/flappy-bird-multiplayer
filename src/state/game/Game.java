@@ -2,7 +2,9 @@ package state.game;
 
 import framework.Keyboard;
 import framework.Render;
+import main.Main;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class Game {
@@ -15,24 +17,93 @@ public class Game {
 
     private Keyboard _keyboard;
 
-    public int _score;
-    public Boolean _gameOver;
-    public Boolean _started;
+    private int _score;
+    private Boolean _gameOver;
+    private Boolean _started;
 
     public Game() {
         _keyboard = Keyboard.getInstance();
 
-        initiate();
+        restart();
     }
 
-    private void initiate() {
+    public Bird getBird() {
+        return _bird;
+    }
+
+    public void setBird(Bird bird) {
+        _bird = bird;
+    }
+
+    public ArrayList<Bird> getBirds() {
+        return _birds;
+    }
+
+    public void setBirds(ArrayList<Bird> birds) {
+        _birds = birds;
+    }
+
+    public Keyboard getKeyboard() {
+        return _keyboard;
+    }
+
+    public void setKeyboard(Keyboard keyboard) {
+        _keyboard = keyboard;
+    }
+
+    public int getScore() {
+        return _score;
+    }
+
+    public void setScore(int score) {
+        _score = score;
+    }
+
+    public Boolean isGameOver() {
+        return _gameOver;
+    }
+
+    public void setGameOver(Boolean gameOver) {
+        _gameOver = gameOver;
+    }
+
+    public Boolean hasStarted() {
+        return _started;
+    }
+
+    public void setStarted(Boolean started) {
+        _started = started;
+    }
+
+    public void restart() {
         _started = false;
         _gameOver = false;
 
         _score = 0;
 
         _bird = new Bird();
-        _bird.start();
+    }
+
+    public void update() {
+        startEvent();
+
+        if (!_started)
+            return;
+
+        resetEvent();
+
+        if (_gameOver)
+            return;
+
+        checkCollisions();
+    }
+
+    public void checkCollisions() {
+        if (_bird.getY() + _bird.getHeight() > Main.FRAME_HEIGHT - 80 || _bird.getY() <= 0) {
+            _gameOver = true;
+            _bird.setAlive(false);
+            _bird.setY(_bird.getY());
+        }
     }
 
     public ArrayList<Render> getRenders() {
@@ -43,6 +114,19 @@ public class Game {
         renders.add(_bird.getRender());
 
         return renders;
+    }
+
+    public void startEvent() {
+        if (!_started && _keyboard.isDown(KeyEvent.VK_SPACE)) {
+            _started = true;
+            _bird.start();
+        }
+    }
+
+    public void resetEvent() {
+        if (_keyboard.isDown(KeyEvent.VK_R)) {
+            restart();
+        }
     }
 
 //    @Override
@@ -58,10 +142,6 @@ public class Game {
 //        else
 //            g.drawImage(r.getImage(), r.getX(), r.getY(), null);
 //
-//        if (_bird.getY() + _bird.getHeight() > Main.FRAME_HEIGHT - 80 || _bird.getY() <= 0) {
-//            _bird.setAlive(false);
-////            _bird.setY(Main.FRAME_HEIGHT - 80 - _bird.getHeight());
-//        }
 //
 //        repaint();
 //    }
