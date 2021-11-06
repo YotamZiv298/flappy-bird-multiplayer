@@ -8,15 +8,26 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements Runnable {
 
     protected Game _game;
 
+    protected Timer _fpsTimer;
+    protected final int _FRAMES_PER_SECOND = 60;
+
     public GamePanel() {
         _game = new Game();
 
+        _fpsTimer = new Timer(1000 / _FRAMES_PER_SECOND, e -> {
+            if (e.getSource() == _fpsTimer)
+                repaint();
+        });
+
         new Thread(this).start();
+
+        _fpsTimer.start();
     }
 
     @Override
