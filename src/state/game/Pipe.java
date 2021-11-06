@@ -23,6 +23,8 @@ public class Pipe extends Thread {
     private final String _PIPE_IMAGE_PATH = "src\\images\\pipe-%s.png";
     private Image _image;
 
+    private final int _REFRESH_RATE = 25;
+
     public Pipe(String orientation) {
         _x = Main.FRAME_WIDTH + 2;
 
@@ -145,7 +147,7 @@ public class Pipe extends Thread {
             _x -= _speed;
 
             try {
-                sleep(25);
+                sleep(_REFRESH_RATE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

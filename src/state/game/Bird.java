@@ -29,6 +29,8 @@ public class Bird extends Thread {
 
     protected Keyboard _keyboard;
 
+    private final int _REFRESH_RATE = 25;
+
     public Bird() {
         _x = 100;
         _y = 150;
@@ -133,7 +135,7 @@ public class Bird extends Thread {
             _y += (int) _velY;
 
             try {
-                sleep(25);
+                sleep(_REFRESH_RATE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
