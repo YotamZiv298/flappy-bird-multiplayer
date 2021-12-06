@@ -5,10 +5,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
+import main.FlappyBirdMultiplayer;
 import state.game.GamePanel;
 import main.Main;
 import state.settings.Settings;
@@ -52,13 +51,23 @@ public class MainMenu extends JPanel {
         _startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(MainMenu.this);
                 GamePanel gamePanel = new GamePanel();
+                String name = GamePanel.class.getSimpleName();
 
-                setVisible(false);
-                jframe.add(gamePanel);
-                jframe.invalidate();
-                jframe.validate();
+                FlappyBirdMultiplayer.appPanelContainer.add(gamePanel, name);
+                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+
+                FlappyBirdMultiplayer.appPanelContainer.remove(MainMenu.this);
+
+//                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, GamePanel.class.getSimpleName());
+//
+//                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(MainMenu.this);
+//                GamePanel gamePanel = new GamePanel();
+//
+//                setVisible(false);
+//                jframe.add(gamePanel);
+//                jframe.invalidate();
+//                jframe.validate();
             }
         });
         _settingsButton.addActionListener(new ActionListener() {

@@ -1,14 +1,17 @@
 package state.game;
 
 import framework.Render;
+import main.FlappyBirdMultiplayer;
+import state.MainMenu;
 
+import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -62,6 +65,25 @@ public class GamePanel extends JPanel implements Runnable {
     public void run() {
         while (true) {
             _game.update();
+
+            if (_game.isGameOver()) {
+                Results results = new Results(1, _game.getScore());
+                String name = Results.class.getSimpleName();
+
+                FlappyBirdMultiplayer.appPanelContainer.add(results, name);
+                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+                FlappyBirdMultiplayer.appPanelContainer.remove(GamePanel.this);
+
+//                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(GamePanel.this);
+//                Results results = new Results(1, _game.getScore());
+//
+//                setVisible(false);
+//                jframe.add(results);
+//                jframe.invalidate();
+//                jframe.validate();
+                break;
+            }
+
             repaint();
 
             try {
