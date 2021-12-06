@@ -4,7 +4,6 @@ import framework.Keyboard;
 import framework.Render;
 import main.Main;
 
-import javax.swing.plaf.nimbus.State;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -213,7 +212,6 @@ public class Game {
                 _score++;
             }
         }
-
     }
 
     public ArrayList<Render> getRenders() {
