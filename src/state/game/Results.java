@@ -6,8 +6,10 @@ import state.MainMenu;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -43,13 +45,18 @@ public class Results extends JPanel {
         _mainMenuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MainMenu mainMenu = new MainMenu();
-                String name = MainMenu.class.getSimpleName();
 
-                FlappyBirdMultiplayer.appPanelContainer.add(mainMenu, name);
-                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
-                FlappyBirdMultiplayer.appPanelContainer.remove(Results.this);
+                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(Results.this);
+                jframe.dispose();
 
+                new FlappyBirdMultiplayer();
+
+//                MainMenu mainMenu = new MainMenu();
+//                String name = MainMenu.class.getSimpleName();
+//
+//                FlappyBirdMultiplayer.appPanelContainer.add(mainMenu, name);
+//                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+//                FlappyBirdMultiplayer.appPanelContainer.remove(Results.this);
 
 //                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(Results.this);
 
