@@ -3,6 +3,7 @@ package state.game;
 import framework.Keyboard;
 import framework.Img;
 import framework.Render;
+import main.Main;
 
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -119,7 +120,7 @@ public class Bird extends Thread {
         super.run();
 
         while (_alive) {
-            System.out.format("X:%d | Y:%d", _x, _y);
+            System.out.format("Y:%d", Main.FRAME_HEIGHT - _y);
             System.out.println();
 
             _velY += _gravity;
