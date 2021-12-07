@@ -2,7 +2,6 @@ package state.game;
 
 import main.FlappyBirdMultiplayer;
 import main.Main;
-import state.MainMenu;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -50,20 +49,6 @@ public class Results extends JPanel {
                 jframe.dispose();
 
                 new FlappyBirdMultiplayer();
-
-//                MainMenu mainMenu = new MainMenu();
-//                String name = MainMenu.class.getSimpleName();
-//
-//                FlappyBirdMultiplayer.appPanelContainer.add(mainMenu, name);
-//                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
-//                FlappyBirdMultiplayer.appPanelContainer.remove(Results.this);
-
-//                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(Results.this);
-
-//                setVisible(false);
-// //               jframe.getComponent(0).setVisible(true);
-//                jframe.invalidate();
-//                jframe.validate();
             }
         });
         _mainMenuButton.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 4 + 4 * 40, 150, 40);

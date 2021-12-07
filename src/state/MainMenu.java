@@ -58,16 +58,6 @@ public class MainMenu extends JPanel {
                 FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
 
                 FlappyBirdMultiplayer.appPanelContainer.remove(MainMenu.this);
-
-//                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, GamePanel.class.getSimpleName());
-//
-//                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(MainMenu.this);
-//                GamePanel gamePanel = new GamePanel();
-//
-//                setVisible(false);
-//                jframe.add(gamePanel);
-//                jframe.invalidate();
-//                jframe.validate();
             }
         });
         _settingsButton.addActionListener(new ActionListener() {
