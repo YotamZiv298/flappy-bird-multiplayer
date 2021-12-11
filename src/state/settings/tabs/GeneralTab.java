@@ -1,5 +1,7 @@
 package state.settings.tabs;
 
+import main.resources.Globals;
+
 import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -38,7 +40,15 @@ public class GeneralTab extends JPanel {
         labels.put(1, new JLabel("Medium"));
         labels.put(2, new JLabel("High"));
 
-        _opacitySlider.setValue(2);
+        float opacity = Float.parseFloat(Globals.getProperty(Globals.PLAYER_OPACITY));
+        if (opacity == 0.25f) {
+            _opacitySlider.setValue(0);
+        } else if (opacity == 0.5f) {
+            _opacitySlider.setValue(1);
+        } else if (opacity == 0.75f) {
+            _opacitySlider.setValue(2);
+        }
+
         _opacitySlider.setLabelTable(labels);
         _opacitySlider.setMajorTickSpacing(1);
         _opacitySlider.setPaintTicks(true);
@@ -62,6 +72,8 @@ public class GeneralTab extends JPanel {
                         break;
                 }
 
+                Globals.setProperty(Globals.PLAYER_OPACITY, String.valueOf(_imageOpacity));
+
                 repaint();
             }
         });
@@ -75,7 +87,7 @@ public class GeneralTab extends JPanel {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g.create();
-        float alpha = _imageOpacity != 0f ? _imageOpacity : 0.75f;
+        float alpha = Float.parseFloat(Globals.getProperty(Globals.PLAYER_OPACITY)) != 0f ? Float.parseFloat(Globals.getProperty(Globals.PLAYER_OPACITY)) : 0.75f;
 
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
