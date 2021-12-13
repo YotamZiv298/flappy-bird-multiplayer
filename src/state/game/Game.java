@@ -122,7 +122,7 @@ public class Game {
         if (!_started)
             return;
 
-        resetEvent();
+//        resetEvent();
 
         if ((_bird.getState() == Thread.State.NEW) && !_bird.isAlive()) {
             _bird.start();
@@ -235,10 +235,10 @@ public class Game {
         }
     }
 
-    public void resetEvent() {
-        if (_keyboard.isDown(KeyEvent.VK_R)) {
-            restart();
-        }
-    }
+//    public void resetEvent() {
+//        if (_keyboard.isDown(KeyEvent.VK_R)) {
+//            restart();
+//        }
+//    }
 
 }

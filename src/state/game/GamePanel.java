@@ -52,10 +52,10 @@ public class GamePanel extends JPanel implements Runnable {
             g2D.drawString(Integer.toString(_game.getScore()), 10, 465);
         }
 
-        if (_game.isGameOver()) {
-            g2D.setFont(new Font("TimesRoman", Font.PLAIN, 20));
-            g2D.drawString("Press R to restart", 150, 240);
-        }
+//        if (_game.isGameOver()) {
+//            g2D.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+//            g2D.drawString("Press R to restart", 150, 240);
+//        }
     }
 
     @Override
