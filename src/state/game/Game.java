@@ -3,6 +3,7 @@ package state.game;
 import framework.Keyboard;
 import framework.Render;
 import main.Main;
+import main.resources.OSDetector;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -11,8 +12,10 @@ public class Game {
 
     public static final int PIPE_DELAY = 100;
 
-    private final String _BACKGROUND_PATH = "src\\images\\background.png";
-    private final String _FOREGROUND_PATH = "src\\images\\foreground.png";
+    private final String _BACKGROUND_PATH =
+            OSDetector.isWindows() ? "src\\images\\background.png" : "src/images/background.png";
+    private final String _FOREGROUND_PATH =
+            OSDetector.isWindows() ? "src\\images\\foreground.png" : "src/images/foreground.png";
 
     private int _pipeDelay;
 

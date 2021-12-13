@@ -4,6 +4,7 @@ import framework.Keyboard;
 import framework.Img;
 import framework.Render;
 import main.Main;
+import main.resources.OSDetector;
 
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -25,7 +26,8 @@ public class Bird extends Thread {
     protected int _jumpDelay;
     protected double _rotation;
 
-    protected final String _BIRD_IMAGE_PATH = "src\\images\\bird.png";
+    protected final String _BIRD_IMAGE_PATH =
+            OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
     protected Image _image;
 
     protected Keyboard _keyboard;

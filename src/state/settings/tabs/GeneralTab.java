@@ -1,11 +1,9 @@
 package state.settings.tabs;
 
 import main.resources.Globals;
+import main.resources.OSDetector;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -22,7 +20,8 @@ public class GeneralTab extends JPanel {
 
     protected JSlider _opacitySlider;
 
-    protected final String _IMAGE_PATH = "src\\images\\bird.png";
+    protected final String _IMAGE_PATH =
+            OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
     protected Image _image;
     protected float _imageOpacity;
 

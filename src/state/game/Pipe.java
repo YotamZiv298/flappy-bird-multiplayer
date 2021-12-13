@@ -3,6 +3,7 @@ package state.game;
 import framework.Img;
 import framework.Render;
 import main.Main;
+import main.resources.OSDetector;
 
 import java.awt.Image;
 
@@ -20,7 +21,8 @@ public class Pipe extends Thread {
 
     private String _orientation;
 
-    private final String _PIPE_IMAGE_PATH = "src\\images\\pipe-%s.png";
+    private final String _PIPE_IMAGE_PATH =
+            OSDetector.isWindows() ? "src\\images\\pipe-%s.png" : "src/images/pipe-%s.png";
     private Image _image;
 
     private final int _REFRESH_RATE = 25;
