@@ -1,5 +1,7 @@
 package state.settings.tabs;
 
+import main.resources.OSDetector;
+
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -13,7 +15,8 @@ import javax.swing.JPanel;
 
 public class AboutTab extends JPanel {
 
-    protected final String _GAME_IMAGE_PATH = "src\\images\\bird.png";
+    protected final String _GAME_IMAGE_PATH =
+            OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
     protected Image _gameImage;
 
     protected JLabel _copyrightLabel;

@@ -1,7 +1,7 @@
 package main;
 
+import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -11,21 +11,38 @@ import state.MainMenu;
 
 public class FlappyBirdMultiplayer extends JFrame {
 
-    protected MainMenu _mainMenu;
+    public static CardLayout appCardLayout;
+    public static JPanel appPanelContainer;
 
-    protected ArrayList<JPanel> _panels;
+    private MainMenu _mainMenu;
+//    private GamePanel _gamePanel;
+
+//    protected ArrayList<JPanel> _panels;
 
     public FlappyBirdMultiplayer() {
         super("Flappy Bird Multiplayer");
 
-        _mainMenu = new MainMenu();
+        appCardLayout = new CardLayout();
+        appPanelContainer = new JPanel(appCardLayout);
 
-        _panels = new ArrayList<>();
-        _panels.add(_mainMenu);
+//        _mainMenu = new MainMenu();
+//        _gamePanel = new GamePanel();
 
-        for (JPanel panel : _panels) {
-            add(panel);
-        }
+        appPanelContainer.add(new MainMenu(), MainMenu.class.getSimpleName());
+//        appPanelContainer.add(_gamePanel, GamePanel.class.getSimpleName());
+
+        appCardLayout.show(appPanelContainer, MainMenu.class.getSimpleName());
+
+//        _panels = new ArrayList<>();
+//        _panels.add(_mainMenu);
+//        _panels.add(_gamePanel);
+
+
+//        for (JPanel panel : _panels) {
+//            add(panel);
+//        }
+
+        add(appPanelContainer);
 
         addKeyListener(Keyboard.getInstance());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

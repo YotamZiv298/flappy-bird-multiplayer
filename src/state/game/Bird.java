@@ -3,6 +3,8 @@ package state.game;
 import framework.Keyboard;
 import framework.Img;
 import framework.Render;
+import main.Main;
+import main.resources.OSDetector;
 
 import java.awt.Image;
 import java.awt.event.KeyEvent;
@@ -24,10 +26,13 @@ public class Bird extends Thread {
     protected int _jumpDelay;
     protected double _rotation;
 
-    protected final String _BIRD_IMAGE_PATH = "src\\images\\bird.png";
+    protected final String _BIRD_IMAGE_PATH =
+            OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
     protected Image _image;
 
     protected Keyboard _keyboard;
+
+    private final int _REFRESH_RATE = 25;
 
     public Bird() {
         _x = 100;
@@ -117,7 +122,7 @@ public class Bird extends Thread {
         super.run();
 
         while (_alive) {
-            System.out.format("|%d|%d| %b", _x, _y, _alive);
+            System.out.format("Y:%d", Main.FRAME_HEIGHT - _y);
             System.out.println();
 
             _velY += _gravity;
@@ -133,7 +138,7 @@ public class Bird extends Thread {
             _y += (int) _velY;
 
             try {
-                sleep(25);
+                sleep(_REFRESH_RATE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
