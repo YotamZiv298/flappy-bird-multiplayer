@@ -7,7 +7,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class Main {
 
     public static final int FRAME_WIDTH = 500;
-    public static final int FRAME_HEIGHT = 520;
+    public static final int FRAME_HEIGHT = 520 + 10;
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
