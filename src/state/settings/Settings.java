@@ -22,6 +22,7 @@ public class Settings extends JDialog {
 
     public Settings() {
         setTitle("Settings");
+        setModal(true);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setFocusable(false);
