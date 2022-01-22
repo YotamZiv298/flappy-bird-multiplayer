@@ -1,22 +1,19 @@
 package state;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import main.FlappyBirdMultiplayer;
-import state.game.GamePanel;
 import main.Main;
 import state.settings.Settings;
 
 public class MainMenu extends JPanel {
 
-    protected JButton _startButton;
-    protected JButton _settingsButton;
-    protected JButton _exitButton;
+    private static JButton _startButton;
+    private final JButton _settingsButton;
+    private final JButton _exitButton;
 
     protected ArrayList<JButton> _buttons;
 
@@ -45,37 +42,36 @@ public class MainMenu extends JPanel {
 //            button.setFocusPainted(false);
 //            button.setContentAreaFilled(false);
             button.setFocusable(false);
-            add(button);
+//            add(button);
         }
 
-        _startButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GamePanel gamePanel = new GamePanel();
-                String name = GamePanel.class.getSimpleName();
+        _startButton.addActionListener(e -> {
+            EnterGamePanel enterGamePanel = new EnterGamePanel();
+            String name = EnterGamePanel.class.getSimpleName();
 
-                FlappyBirdMultiplayer.appPanelContainer.add(gamePanel, name);
-                FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+            FlappyBirdMultiplayer.appPanelContainer.add(enterGamePanel, name);
+            FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+//
+            FlappyBirdMultiplayer.appPanelContainer.remove(MainMenu.this);
 
-                FlappyBirdMultiplayer.appPanelContainer.remove(MainMenu.this);
-            }
+//            GamePanel gamePanel = new GamePanel();
+//            String name = GamePanel.class.getSimpleName();
+//
+//            FlappyBirdMultiplayer.appPanelContainer.add(gamePanel, name);
+//            FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+//
+//            FlappyBirdMultiplayer.appPanelContainer.remove(MainMenu.this);
         });
-        _settingsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Settings();
-            }
-        });
-        _exitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        _settingsButton.addActionListener(e -> new Settings());
+        _exitButton.addActionListener(e -> System.exit(0));
 
         add(_startButton);
         add(_settingsButton);
         add(_exitButton);
+    }
+
+    public static JButton getStartButton() {
+        return _startButton;
     }
 
 }
