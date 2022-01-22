@@ -3,7 +3,10 @@ package state.settings.tabs;
 import main.resources.Globals;
 import main.resources.OSDetector;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
