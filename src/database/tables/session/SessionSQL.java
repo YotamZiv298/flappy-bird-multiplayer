@@ -13,6 +13,8 @@ public interface SessionSQL {
 
     Session getSession(String name) throws SQLException;
 
+    boolean updateSession(Session session) throws SQLException;
+
     ArrayList<Session> getAllSessions() throws SQLException;
 
     boolean sessionTableExists() throws SQLException;

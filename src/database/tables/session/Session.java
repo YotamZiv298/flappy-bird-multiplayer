@@ -39,6 +39,10 @@ public class Session {
         _players.add(player);
     }
 
+    public void removePlayer(String player) {
+        _players.remove(player);
+    }
+
     public ArrayList<Pair<String, String>> getLeaderboard() {
         return _leaderboard;
     }

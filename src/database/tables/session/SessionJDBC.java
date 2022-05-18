@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 public class SessionJDBC implements SessionSQL {
 
@@ -22,6 +22,7 @@ public class SessionJDBC implements SessionSQL {
         if (!sessionTableExists()) createTable();
     }
 
+    @Override
     public void createTable() throws SQLException {
         String sql = "CREATE TABLE session(" +
                 "id SERIAL PRIMARY KEY," +
@@ -35,7 +36,7 @@ public class SessionJDBC implements SessionSQL {
     }
 
     @Override
-    public void addSession(Session session) throws SQLException {
+    public synchronized void addSession(Session session) throws SQLException {
         String sql = "INSERT INTO session(code, players, leaderboard)"
                 + "VALUES (?,?,?)";
 
@@ -55,7 +56,7 @@ public class SessionJDBC implements SessionSQL {
     }
 
     @Override
-    public void removeSession(Session session) throws SQLException {
+    public synchronized void removeSession(Session session) throws SQLException {
         String sql = "DELETE FROM session WHERE id = ?";
         PreparedStatement ps = _connection.prepareStatement(sql);
 
@@ -65,14 +66,51 @@ public class SessionJDBC implements SessionSQL {
 
     @Override
     public Session getSession(String code) throws SQLException {
-        return getAllSessions().stream().filter(session -> session.getCode().equals(code)).findFirst().orElse(null);
+        Session session = null;
+
+        String sql = "SELECT * FROM session WHERE code = ?";
+        PreparedStatement ps = _connection.prepareStatement(sql);
+
+        ps.setString(1, code);
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            session = new Session();
+
+            session.setCode(rs.getString("code"));
+            session.setId(rs.getInt("id"));
+            session.setPlayers(new ArrayList(Arrays.asList((String[]) rs.getArray("players").getArray())));
+            session.setLeaderboard(new ArrayList(Arrays.asList((String[]) rs.getArray("leaderboard").getArray())));
+        }
+
+        rs.close();
+        ps.close();
+
+        return session;
+//        return getAllSessions().stream().filter(session -> session.getCode().equals(code)).findFirst().orElse(null);
+    }
+
+    @Override
+    public synchronized boolean updateSession(Session session) throws SQLException {
+        String sql = "UPDATE session SET players = ?, leaderboard = ? WHERE id = ?";
+
+        PreparedStatement ps = _connection.prepareStatement(sql);
+
+        ps.setArray(1, _connection.createArrayOf("VARCHAR", session.getPlayers().toArray()));
+        ps.setArray(2, _connection.createArrayOf("VARCHAR", session.getLeaderboard().toArray()));
+        ps.setInt(3, session.getId());
+
+        ps.executeUpdate();
+
+        ps.close();
+
+        return true;
     }
 
     @Override
     public ArrayList<Session> getAllSessions() throws SQLException {
         ArrayList<Session> array = new ArrayList<>();
-//
-//        if (!sessionTableExists()) return array;
 
         ResultSet result = _connection.prepareStatement("SELECT * FROM session").executeQuery();
 
@@ -81,12 +119,8 @@ public class SessionJDBC implements SessionSQL {
 
             session.setCode(result.getString("code"));
             session.setId(result.getInt("id"));
-//            session.setPlayers((ArrayList<String>) result.getArray("players"));
-
-            session.setPlayers(new ArrayList(Collections.singletonList(result.getArray("players"))));
-            session.setLeaderboard(new ArrayList(Collections.singletonList(result.getArray("leaderboard"))));
-
-//            session.setLeaderboard((ArrayList<Pair<String, String>>) result.getArray("leaderboard"));
+            session.setPlayers(new ArrayList(Arrays.asList((String[]) result.getArray("players").getArray())));
+            session.setLeaderboard(new ArrayList(Arrays.asList((String[]) result.getArray("leaderboard").getArray())));
 
             array.add(session);
         }
@@ -96,6 +130,7 @@ public class SessionJDBC implements SessionSQL {
         return array;
     }
 
+    @Override
     public boolean sessionTableExists() throws SQLException {
         DatabaseMetaData dbm = _connection.getMetaData();
         ResultSet tables = dbm.getTables(null, null, "session", null);
