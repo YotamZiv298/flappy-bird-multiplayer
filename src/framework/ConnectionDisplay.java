@@ -21,9 +21,27 @@ public class ConnectionDisplay extends JPanel implements Runnable {
         if (MainMenu.getStartButton() != null) {
             if (!isConnected) {
                 MainMenu.getStartButton().setEnabled(false);
-                MainMenu.getStartButton().setToolTipText("Available when connected");
+                MainMenu.getStartButton().setBackground(new Color(179, 74, 0));
             } else {
                 MainMenu.getStartButton().setEnabled(true);
+            }
+        }
+
+        if (MainMenu.getLeaderboardButton() != null) {
+            if (!isConnected) {
+                MainMenu.getLeaderboardButton().setEnabled(false);
+                MainMenu.getLeaderboardButton().setBackground(new Color(179, 74, 0));
+            } else {
+                MainMenu.getLeaderboardButton().setEnabled(true);
+            }
+        }
+
+        if (MainMenu.getStartExtremeModeButton() != null) {
+            if (!isConnected) {
+                MainMenu.getStartExtremeModeButton().setEnabled(false);
+                MainMenu.getStartExtremeModeButton().setBackground(new Color(179, 74, 0));
+            } else {
+                MainMenu.getStartExtremeModeButton().setEnabled(true);
             }
         }
 
@@ -38,15 +56,9 @@ public class ConnectionDisplay extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        do {
             displayStatus();
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        } while (!Thread.interrupted());
     }
 
 }
