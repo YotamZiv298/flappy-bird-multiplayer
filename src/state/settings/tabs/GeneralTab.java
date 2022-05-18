@@ -3,6 +3,11 @@ package state.settings.tabs;
 import main.resources.Globals;
 import main.resources.OSDetector;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,14 +15,6 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
-
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class GeneralTab extends JPanel {
 
@@ -57,27 +54,24 @@ public class GeneralTab extends JPanel {
         _opacitySlider.setPaintLabels(true);
         _opacitySlider.setFocusable(false);
 
-        _opacitySlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
+        _opacitySlider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
 
-                switch (source.getValue()) {
-                    case 0:
-                        _imageOpacity = 0.25f;
-                        break;
-                    case 1:
-                        _imageOpacity = 0.5f;
-                        break;
-                    case 2:
-                        _imageOpacity = 0.75f;
-                        break;
-                }
-
-                Globals.setProperty(Globals.PLAYER_OPACITY, String.valueOf(_imageOpacity));
-
-                repaint();
+            switch (source.getValue()) {
+                case 0:
+                    _imageOpacity = 0.25f;
+                    break;
+                case 1:
+                    _imageOpacity = 0.5f;
+                    break;
+                case 2:
+                    _imageOpacity = 0.75f;
+                    break;
             }
+
+            Globals.setProperty(Globals.PLAYER_OPACITY, String.valueOf(_imageOpacity));
+
+            repaint();
         });
 
         add(_opacitySlider);

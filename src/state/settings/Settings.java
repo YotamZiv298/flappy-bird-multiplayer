@@ -11,6 +11,7 @@ import javax.swing.JTabbedPane;
 
 import main.Main;
 import state.settings.tabs.AboutTab;
+import state.settings.tabs.ControlsTab;
 import state.settings.tabs.GeneralTab;
 import state.settings.tabs.NetworkTab;
 
@@ -18,6 +19,7 @@ public class Settings extends JDialog {
 
     protected GeneralTab _generalPanel;
     protected NetworkTab _networkPanel;
+    protected ControlsTab _controlsPanel;
     protected AboutTab _aboutPanel;
 
     public Settings() {
@@ -48,10 +50,12 @@ public class Settings extends JDialog {
 
         _generalPanel = new GeneralTab();
         _networkPanel = new NetworkTab();
+        _controlsPanel = new ControlsTab();
         _aboutPanel = new AboutTab();
 
         components.put("General", _generalPanel);
         components.put("Network", _networkPanel);
+        components.put("Game Controls", _controlsPanel);
         components.put("About", _aboutPanel);
 
         return components;
