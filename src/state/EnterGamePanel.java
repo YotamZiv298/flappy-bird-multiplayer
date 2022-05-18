@@ -3,7 +3,6 @@ package state;
 import framework.Keyboard;
 import main.FlappyBirdMultiplayer;
 import main.Main;
-import main.resources.Globals;
 import server.framework.Message;
 
 import javax.swing.JButton;
@@ -32,6 +31,7 @@ public class EnterGamePanel extends JPanel {
 
         _backButton = new JButton("⬅ Back");
         _backButton.setBounds(Main.FRAME_WIDTH / 10, Main.FRAME_HEIGHT / 14, 100, 40);
+        _backButton.setFocusable(false);
         _backButton.addActionListener(e -> {
             MainMenu mainMenu = new MainMenu();
             String name = MainMenu.class.getSimpleName();
@@ -87,14 +87,21 @@ public class EnterGamePanel extends JPanel {
         _enterGameButton.setFocusable(false);
         _enterGameButton.addActionListener(e -> {
             String code = _gameCodeTextField.getText();
-            String player = Globals.getProperty(Globals.IP_ADDRESS);
+//            String player = Globals.getProperty(Globals.IP_ADDRESS);
 
-            FlappyBirdMultiplayer.client.send(new Message<>(1, new String[]{code, player}));
-            Object data = FlappyBirdMultiplayer.client.received();
+//            FlappyBirdMultiplayer.client.send(new Message<>(Message.RequestCode.JOIN_GAME, new String[]{code, player}));
+            FlappyBirdMultiplayer.client.send(new Message<>(Message.RequestCode.JOIN_GAME, code));
 
-            boolean isOk = (boolean) data;
+            Message<?> data = FlappyBirdMultiplayer.client.getData(Message.RequestCode.JOIN_GAME);
 
-            if (isOk) {
+            if (data == null) {
+                JOptionPane.showMessageDialog(null, "Server is not responding. Please try again later.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Boolean success = (Boolean) data.getData();
+
+            if (success) {
                 GameLobby gameLobby = new GameLobby(code);
                 String name = GameLobby.class.getSimpleName();
 
@@ -112,19 +119,16 @@ public class EnterGamePanel extends JPanel {
         _newGameButton.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 2 + 4 * 40, 150, 40);
         _newGameButton.setFocusable(false);
         _newGameButton.addActionListener(e -> {
-            FlappyBirdMultiplayer.client.send(new Message<>(0, null));
+            FlappyBirdMultiplayer.client.send(new Message<>(Message.RequestCode.NEW_GAME, null));
 
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            Message<?> data = FlappyBirdMultiplayer.client.getData(Message.RequestCode.NEW_GAME);
+
+            if (data == null) {
+                JOptionPane.showMessageDialog(null, "Server is not responding. Please try again later.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
 
-            Object data = FlappyBirdMultiplayer.client.received();
-
-            String code = (String) data;
-
-            if (code == null) return;
+            String code = (String) data.getData();
 
             GameLobby gameLobby = new GameLobby(code);
             String name = GameLobby.class.getSimpleName();
