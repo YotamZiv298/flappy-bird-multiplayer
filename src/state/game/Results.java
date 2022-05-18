@@ -12,18 +12,16 @@ import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Results extends JPanel {
 
-    private JLabel _placeLabel;
-    private String _placeText;
+    private final JLabel _placeLabel;
+    private final String _placeText;
 
-    private JLabel _scoreLabel;
-    private String _scoreText;
+    private final JLabel _scoreLabel;
+    private final String _scoreText;
 
-    private JButton _mainMenuButton;
+    private final JButton _mainMenuButton;
 
     public Results(int place, int score) {
         setLayout(null);
@@ -41,15 +39,13 @@ public class Results extends JPanel {
         _scoreLabel.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 4 + 2 * 40, 150, 40);
 
         _mainMenuButton = new JButton("Return to Main Menu");
-        _mainMenuButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        _mainMenuButton.addActionListener(e -> {
+            FlappyBirdMultiplayer.client.dispose();
 
-                JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(Results.this);
-                jframe.dispose();
+            JFrame jframe = (JFrame) SwingUtilities.getWindowAncestor(Results.this);
+            jframe.dispose();
 
-                new FlappyBirdMultiplayer();
-            }
+            new FlappyBirdMultiplayer();
         });
         _mainMenuButton.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 4 + 4 * 40, 150, 40);
 

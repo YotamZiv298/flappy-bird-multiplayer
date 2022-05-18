@@ -1,9 +1,9 @@
 package state.game;
 
-import framework.Keyboard;
+import audio.Audio;
 import framework.Img;
+import framework.Keyboard;
 import framework.Render;
-import main.Main;
 import main.resources.OSDetector;
 
 import java.awt.Image;
@@ -122,9 +122,6 @@ public class Bird extends Thread {
         super.run();
 
         while (_alive) {
-            System.out.format("Y:%d", Main.FRAME_HEIGHT - _y);
-            System.out.println();
-
             _velY += _gravity;
 
             if (_jumpDelay > 0)
@@ -133,12 +130,14 @@ public class Bird extends Thread {
             if (_alive && _keyboard.isDown(KeyEvent.VK_SPACE) && _jumpDelay <= 0) {
                 _velY = -10;
                 _jumpDelay = 10;
+
+                Audio.play(Audio.FLAP);
             }
 
             _y += (int) _velY;
 
             try {
-                sleep(_REFRESH_RATE);
+                Thread.sleep(_REFRESH_RATE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

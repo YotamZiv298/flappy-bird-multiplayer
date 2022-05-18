@@ -7,7 +7,7 @@ import main.resources.OSDetector;
 
 import java.awt.Image;
 
-public class Pipe extends Thread {
+public class Pipe {
 
     private int _x;
     private int _y;
@@ -25,23 +25,9 @@ public class Pipe extends Thread {
             OSDetector.isWindows() ? "src\\images\\pipe-%s.png" : "src/images/pipe-%s.png";
     private Image _image;
 
-    private final int _REFRESH_RATE = 25;
-
     public Pipe(String orientation) {
-        _x = Main.FRAME_WIDTH + 2;
-
-        _width = 66;
-        _height = 400;
-
-        _alive = true;
-
-        _speed = 3;
-
         _orientation = orientation;
-
-        if (orientation.equals("south")) {
-            _y = -(int) (Math.random() * 120) - _height / 2;
-        }
+        reset();
     }
 
     public int getX() {
@@ -112,6 +98,23 @@ public class Pipe extends Thread {
         _image = image;
     }
 
+    public void reset() {
+        _x = Main.FRAME_WIDTH + 2;
+
+        _width = 66;
+        _height = 400;
+
+        _speed = 3;
+
+        if (_orientation.equals("south")) {
+            _y = -(int) (Math.random() * 120) - _height / 2;
+        }
+    }
+
+    public void update() {
+        _x -= _speed;
+    }
+
     public boolean collides(int x, int y, int width, int height) {
         int margin = 2;
 
@@ -139,21 +142,6 @@ public class Pipe extends Thread {
         r.setImage(_image);
 
         return r;
-    }
-
-    @Override
-    public void run() {
-        super.run();
-
-        while (_alive) {
-            _x -= _speed;
-
-            try {
-                sleep(_REFRESH_RATE);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 }
