@@ -188,6 +188,8 @@ public class Game {
         if (_bird.getY() + _bird.getHeight() > Main.FRAME_HEIGHT - 80 || _bird.getY() <= 0) {
             _gameOver = true;
             _bird.setAlive(false);
+
+            Audio.play(Audio.DIE);
         }
     }
 
