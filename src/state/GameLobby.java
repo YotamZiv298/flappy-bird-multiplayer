@@ -2,65 +2,103 @@ package state;
 
 import main.FlappyBirdMultiplayer;
 import main.Main;
+import server.framework.Message;
 import state.game.GamePanel;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import java.awt.Color;
 
 public class GameLobby extends JPanel {
 
-    private final JTextField _codeTextField;
+    private final JTextField _gameCodeTextField;
 
-    private final DefaultListModel<String> _joinedPlayersList;
-    private final JList<DefaultListModel<String>> _joinedPlayersContainer;
-    private final JScrollPane _scrollPane;
+//    private final JoinedPlayers _joinedPlayers;
 
     private final JButton _deleteSessionButton;
+    private final JButton _leaveSessionButton;
     private final JButton _startGameButton;
+
+    private Thread _sessionActive;
 
     public GameLobby(String code) {
         setLayout(null);
 
-        _codeTextField = new JTextField(code);
-        _codeTextField.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 9, 150, 40);
-        _codeTextField.setHorizontalAlignment(JTextField.CENTER);
-        _codeTextField.setEnabled(false);
+        _gameCodeTextField = new JTextField(code);
+        _gameCodeTextField.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 6, 150, 40);
+        _gameCodeTextField.setHorizontalAlignment(JTextField.CENTER);
+        _gameCodeTextField.setEnabled(false);
 
-        _joinedPlayersList = new DefaultListModel<>();
-
-        _joinedPlayersContainer = new JList(_joinedPlayersList);
-        _joinedPlayersContainer.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        _joinedPlayersContainer.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        _joinedPlayersContainer.setVisibleRowCount(-1);
-        _joinedPlayersContainer.setFixedCellWidth(100);
-        _joinedPlayersContainer.setFocusable(false);
-        _joinedPlayersContainer.setEnabled(false);
-
-        _scrollPane = new JScrollPane(_joinedPlayersContainer);
-        _scrollPane.setBounds(Main.FRAME_WIDTH / 8, Main.FRAME_HEIGHT / 9 + 2 * 40, Main.FRAME_WIDTH - Main.FRAME_WIDTH / 4, Main.FRAME_HEIGHT / 3);
-        _scrollPane.setFocusable(false);
-
-//        for (int i = 0; i < 100; i++) {
-//            _joinedPlayersList.addElement(String.format("player %d", i));
-//        }
+//        _joinedPlayers = new JoinedPlayers(_gameCodeTextField.getText());
 
         _deleteSessionButton = new JButton("Delete Session");
         _deleteSessionButton.setBounds(Main.FRAME_WIDTH / 2 - 200, 7 * Main.FRAME_HEIGHT / 9, 150, 40);
         _deleteSessionButton.setForeground(Color.red);
         _deleteSessionButton.setFocusable(false);
-        _deleteSessionButton.addActionListener(e -> {
-            int answer = JOptionPane.showConfirmDialog(null, "Are you sure you want to stop the session?", "Delete Session", JOptionPane.YES_NO_OPTION);
+        _deleteSessionButton.setEnabled(false);
+//        _deleteSessionButton.addActionListener(e -> {
+//            int answer = JOptionPane.showConfirmDialog(null, "Are you sure you want to stop the session?", "Delete Session", JOptionPane.YES_NO_OPTION);
+//
+//            if (answer == JOptionPane.NO_OPTION) return;
+//
+//            String gameCode = _gameCodeTextField.getText();
+//            FlappyBirdMultiplayer.client.send(new Message<>(Message.RequestCode.DELETE_GAME, gameCode));
+//
+//            Message<?> data = FlappyBirdMultiplayer.client.getData(Message.RequestCode.DELETE_GAME);
+//
+//            if (data == null) {
+//                JOptionPane.showMessageDialog(null, "Server is not responding. Please try again later.", "Error", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//
+//            Boolean success = (Boolean) data.getData();
+//
+//            if (!success) {
+//                JOptionPane.showMessageDialog(null, "Failed to delete session", "Error", JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//
+//            _joinedPlayers.kill();
+//
+//            MainMenu mainMenu = new MainMenu();
+//            String name = GamePanel.class.getSimpleName();
+//
+//            FlappyBirdMultiplayer.appPanelContainer.add(mainMenu, name);
+//            FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+//
+//            FlappyBirdMultiplayer.appPanelContainer.remove(GameLobby.this);
+//        });
 
-            if (answer == JOptionPane.NO_OPTION) {
-                return;
+        _leaveSessionButton = new JButton("Leave Session");
+        _leaveSessionButton.setBounds(Main.FRAME_WIDTH / 2 - 200, Main.FRAME_HEIGHT / 14, 150, 40);
+        _leaveSessionButton.setFocusable(false);
+        _leaveSessionButton.addActionListener(e -> {
+            int answer = JOptionPane.showConfirmDialog(null, "Are you sure you want to leave the session?", "Leave Session", JOptionPane.YES_NO_OPTION);
+
+            if (answer == JOptionPane.NO_OPTION) return;
+
+            if (!_sessionActive.isAlive()) {
+                String gameCode = _gameCodeTextField.getText();
+                FlappyBirdMultiplayer.client.send(new Message<>(Message.RequestCode.LEAVE_GAME, gameCode));
+
+                Message<?> data = FlappyBirdMultiplayer.client.getData(Message.RequestCode.LEAVE_GAME);
+
+                if (data == null) {
+                    JOptionPane.showMessageDialog(null, "Server is not responding. Please try again later.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                Boolean success = (Boolean) data.getData();
+
+                if (!success) {
+                    JOptionPane.showMessageDialog(null, "Failed to leave session", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             }
+            _sessionActive.interrupt();
+//            _joinedPlayers.kill();
 
             MainMenu mainMenu = new MainMenu();
             String name = GamePanel.class.getSimpleName();
@@ -75,7 +113,9 @@ public class GameLobby extends JPanel {
         _startGameButton.setBounds(Main.FRAME_WIDTH / 2 + 50, 7 * Main.FRAME_HEIGHT / 9, 150, 40);
         _startGameButton.setFocusable(false);
         _startGameButton.addActionListener(e -> {
-            GamePanel gamePanel = new GamePanel();
+//            _joinedPlayers.kill();
+
+            GamePanel gamePanel = new GamePanel(false);
             String name = GamePanel.class.getSimpleName();
 
             FlappyBirdMultiplayer.appPanelContainer.add(gamePanel, name);
@@ -84,10 +124,53 @@ public class GameLobby extends JPanel {
             FlappyBirdMultiplayer.appPanelContainer.remove(GameLobby.this);
         });
 
-        add(_codeTextField);
-        add(_scrollPane);
+        add(_gameCodeTextField);
+//        add(_joinedPlayers.display());
         add(_deleteSessionButton);
+        add(_leaveSessionButton);
         add(_startGameButton);
+
+        _sessionActive = new Thread(() -> {
+            String gameCode = _gameCodeTextField.getText();
+
+            while (!Thread.interrupted()) {
+                FlappyBirdMultiplayer.client.send(new Message<>(Message.RequestCode.IS_SESSION_ACTIVE, gameCode));
+
+                Message<?> data = FlappyBirdMultiplayer.client.getData(Message.RequestCode.IS_SESSION_ACTIVE);
+
+                if (data == null) continue;
+
+                Boolean active = (Boolean) data.getData();
+
+                if (!active) {
+                    JOptionPane.showMessageDialog(null, "Session has ended.", "Error", JOptionPane.ERROR_MESSAGE);
+                    break;
+                }
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    e.printStackTrace();
+                }
+            }
+
+            _startGameButton.setEnabled(false);
+            _deleteSessionButton.setEnabled(false);
+        });
+        _sessionActive.start();
+    }
+
+    private void returnToMainMenu() {
+//        _joinedPlayers.kill();
+
+        MainMenu mainMenu = new MainMenu();
+        String name = GamePanel.class.getSimpleName();
+
+        FlappyBirdMultiplayer.appPanelContainer.add(mainMenu, name);
+        FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
+
+        FlappyBirdMultiplayer.appPanelContainer.remove(GameLobby.this);
     }
 
 }
