@@ -2,6 +2,7 @@ package server.framework;
 
 import client.ClientInstance;
 import database.PostgreSQLJDBC;
+import database.tables.leaderboard.PlayerData;
 import database.tables.session.Session;
 import server.ServerFrame;
 
@@ -11,17 +12,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class ServerListener implements ServerInterface {
-
-    /*
-     * Codes:
-     * 0 - New game
-     * 1 - Join game
-     * 2 - Delete game
-     * 3 - Start game
-     * 4 -
-     * 5 -
-     * 6 -
-     * */
 
     @Override
     public void clientConnected(ClientInstance client, ObjectOutputStream out) {
@@ -41,7 +31,7 @@ public class ServerListener implements ServerInterface {
     public Message<?> received(ClientInstance client, Message<?> message) {
         String format = "\n" +
                 "~~~~~~~~~~~~~~~~~\n" +
-                "%s request :: code %d\n" +
+                "%s request :: code %s\n" +
                 "data: %s\n" +
                 "~~~~~~~~~~~~~~~~~";
         String log = String.format(format, client.toString(), message.getRequestCode(), message.getData());
@@ -52,15 +42,15 @@ public class ServerListener implements ServerInterface {
     }
 
     @Override
-    public Object respond(Message<?> message) {
+    public Message<?> respond(ClientInstance client, Message<?> message) {
         try {
-            Object response = processReceivedData(message);
+            Message<?> response = processReceivedData(client, message);
             String format = "\n" +
                     "~~~~~~~~~~~~~~~~~\n" +
-                    "Server response :: code %d\n" +
+                    "Server response :: code %s\n" +
                     "data: %s\n" +
                     "~~~~~~~~~~~~~~~~~";
-            String log = String.format(format, message.getRequestCode(), response);
+            String log = String.format(format, message.getRequestCode(), response != null ? response.getData() : "null");
 
             ServerFrame.addLog(log);
 
@@ -72,69 +62,142 @@ public class ServerListener implements ServerInterface {
         return null;
     }
 
-    public Object processReceivedData(Message<?> message) throws SQLException, ClassNotFoundException {
-        int code = message.getRequestCode();
+    public synchronized Message<?> processReceivedData(ClientInstance client, Message<?> message) throws SQLException, ClassNotFoundException {
+        Message.RequestCode code = message.getRequestCode();
         Object data = message.getData();
 
         switch (code) {
-            case 0:
-                return createNewGame();
-            case 1:
-                return joinGame(data);
-            case 2:
+            case NEW_GAME:
+                return createNewGame(client);
+            case JOIN_GAME:
+                return joinGame(client, data);
+            case LEAVE_GAME:
+                return leaveGame(client, data);
+            case DELETE_GAME:
                 return deleteGame(data);
-            case 3:
+            case START_GAME:
                 return startGame();
+            case RECEIVE_PLAYERS_IN_SESSION:
+                return getPlayersInSession(data);
+            case IS_SESSION_ACTIVE:
+                return isSessionActive(data);
+            case RECEIVE_LEADERBOARD:
+                return getLeaderboard();
+            case SET_PLAYER_SCORE:
+                return setPlayerScore(data);
+//            case FIRST_CONNECTION_CHECK:
+//                return new Message<>(Message.RequestCode.FIRST_CONNECTION_CHECK, true);
         }
 
         return null;
     }
 
-    public String createNewGame() throws SQLException, ClassNotFoundException {
+    public Message<String> createNewGame(ClientInstance client) throws SQLException {
         Random random = new Random();
 
         String gameCode;
         do {
-            gameCode = String.valueOf(random.nextInt(999999));
+            gameCode = String.format("%06d", random.nextInt(999999));
         } while (PostgreSQLJDBC.sessionJDBCInstance().getSession(gameCode) != null);
 
         Session session = new Session();
 
         session.setCode(gameCode);
+
         session.setPlayers(new ArrayList<>());
+        session.addPlayer(client.toString());
+
         session.setLeaderboard(new ArrayList<>());
 
         PostgreSQLJDBC.sessionJDBCInstance().addSession(session);
 
-        return gameCode;
+        return new Message<>(Message.RequestCode.NEW_GAME, gameCode);
     }
 
-    public boolean joinGame(Object data) throws SQLException, ClassNotFoundException {
-        String[] array = (String[]) data;
-        String gameCode = array[0];
-        String player = array[1];
+    public Message<Boolean> joinGame(ClientInstance client, Object data) throws SQLException {
+        String sessionCode = (String) data;
+//        String[] array = (String[]) data;
+//        String gameCode = array[0];
+//        String player = array[1];
 
-        Session session = PostgreSQLJDBC.sessionJDBCInstance().getSession(gameCode);
+        Session session = PostgreSQLJDBC.sessionJDBCInstance().getSession(sessionCode);
 
-        if (session == null) return false;
+        if (session == null) return new Message<>(Message.RequestCode.JOIN_GAME, Boolean.FALSE);
 
-        session.addPlayer(player);
-        session.setPlayers(session.getPlayers());
+        session.addPlayer(client.toString());
 
-        return true;
+        Boolean success = PostgreSQLJDBC.sessionJDBCInstance().updateSession(session);
+
+        return new Message<>(Message.RequestCode.JOIN_GAME, success);
     }
 
-    public boolean deleteGame(Object data) throws SQLException, ClassNotFoundException {
+    public Message<Boolean> leaveGame(ClientInstance client, Object data) throws SQLException {
         String sessionCode = (String) data;
         Session session = PostgreSQLJDBC.sessionJDBCInstance().getSession(sessionCode);
 
-        PostgreSQLJDBC.sessionJDBCInstance().removeSession(session);
+        if (session == null)
+            return new Message<>(Message.RequestCode.LEAVE_GAME, Boolean.FALSE);
 
-        return true;
+        session.removePlayer(client.toString());
+
+        Boolean success = session.getPlayers().size() != 0 ? Boolean.valueOf(PostgreSQLJDBC.sessionJDBCInstance().updateSession(session)) : deleteGame(sessionCode).getData();
+
+        return new Message<>(Message.RequestCode.LEAVE_GAME, success);
     }
 
-    public boolean startGame() {
-        return true;
+    public Message<Boolean> deleteGame(Object data) throws SQLException {
+        String sessionCode = (String) data;
+        Session session = PostgreSQLJDBC.sessionJDBCInstance().getSession(sessionCode);
+
+        if (session == null) return new Message<>(Message.RequestCode.DELETE_GAME, Boolean.FALSE);
+
+        PostgreSQLJDBC.sessionJDBCInstance().removeSession(session);
+
+        return new Message<>(Message.RequestCode.DELETE_GAME, Boolean.TRUE);
+    }
+
+    public Message<Boolean> startGame() {
+        return new Message<>(Message.RequestCode.START_GAME, Boolean.TRUE);
+    }
+
+    public Message<ArrayList<String>> getPlayersInSession(Object data) throws SQLException {
+        String sessionCode = (String) data;
+        Session session = PostgreSQLJDBC.sessionJDBCInstance().getSession(sessionCode);
+
+        return new Message<>(Message.RequestCode.RECEIVE_PLAYERS_IN_SESSION, session != null ? session.getPlayers() : new ArrayList<>());
+    }
+
+    public Message<Boolean> isSessionActive(Object data) throws SQLException {
+        String sessionCode = (String) data;
+        Session session = PostgreSQLJDBC.sessionJDBCInstance().getSession(sessionCode);
+
+        return new Message<>(Message.RequestCode.IS_SESSION_ACTIVE, session != null ? Boolean.TRUE : Boolean.FALSE);
+    }
+
+    public Message<ArrayList<PlayerData>> getLeaderboard() throws SQLException {
+        ArrayList<PlayerData> leaderboard = PostgreSQLJDBC.leaderboardJDBCInstance().getLeaderboard();
+
+        return new Message<>(Message.RequestCode.RECEIVE_LEADERBOARD, leaderboard != null ? leaderboard : new ArrayList<>());
+    }
+
+    public Message<Boolean> setPlayerScore(Object data) throws SQLException {
+        PlayerData playerData = (PlayerData) data;
+
+        ArrayList<PlayerData> leaderboard = PostgreSQLJDBC.leaderboardJDBCInstance().getLeaderboard();
+
+        for (PlayerData existingPlayer : leaderboard) {
+            if (existingPlayer.getName().equals(playerData.getName())) {
+                if (existingPlayer.getScore() <= playerData.getScore()) {
+                    PostgreSQLJDBC.leaderboardJDBCInstance().updateLeaderboard(playerData);
+                }
+
+                return new Message<>(Message.RequestCode.SET_PLAYER_SCORE, Boolean.TRUE);
+            }
+        }
+
+        PostgreSQLJDBC.leaderboardJDBCInstance().addPlayer(playerData);
+
+        return new Message<>(Message.RequestCode.SET_PLAYER_SCORE, Boolean.TRUE);
     }
 
     @Override

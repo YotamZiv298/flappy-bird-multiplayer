@@ -5,7 +5,7 @@ import server.framework.ServerListener;
 public class FlappyBirdMultiplayerServer extends Thread {
 
     private final Server _server;
-    private boolean _alive;
+    private volatile boolean _alive;
     private static final int _port = 6066;
     private static final ServerListener _serverListener = new ServerListener();
 
@@ -27,10 +27,8 @@ public class FlappyBirdMultiplayerServer extends Thread {
         super.run();
 
         while (_alive) {
-            try {
-                sleep(25);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (Thread.interrupted()) {
+                turnOff();
             }
         }
     }

@@ -1,10 +1,12 @@
 package server;
 
 import client.ClientInstance;
-import server.framework.ServerInterface;
 import server.framework.Message;
+import server.framework.ServerInterface;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -45,21 +47,19 @@ public class Server {
 
                                 ObjectOutputStream out = new ObjectOutputStream(s.getOutputStream());
                                 ObjectInputStream in = new ObjectInputStream(s.getInputStream());
-//                                BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-//                                PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+
                                 ClientInstance client = new ClientInstance(s.getInetAddress(), s.getPort());
 
                                 _serverListener.clientConnected(client, out);
 
                                 while (_open) {
                                     try {
-//                                        _serverListener.received(client, in.readLine());
                                         Message<?> receivedMessage = _serverListener.received(client, (Message<?>) in.readObject());
 
-                                        Object response = _serverListener.respond(receivedMessage);
+                                        Message<?> response = _serverListener.respond(client, receivedMessage);
 
                                         out.writeObject(response);
-
+                                        out.flush();
                                     } catch (IOException e) {
                                         _serverListener.clientDisconnected(client);
 

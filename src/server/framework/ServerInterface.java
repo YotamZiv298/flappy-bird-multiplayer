@@ -11,7 +11,7 @@ public interface ServerInterface {
 
     Message<?> received(ClientInstance client, Message<?> data);
 
-    Object respond(Message<?> message);
+    Message<?> respond(ClientInstance client, Message<?> message);
 
     void serverClosed();
 

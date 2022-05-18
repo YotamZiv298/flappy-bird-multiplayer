@@ -4,6 +4,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,6 +14,7 @@ public class ServerFrame extends JFrame {
     private final FlappyBirdMultiplayerServer _flappyBirdMultiplayerServer;
 
     private static JTextArea _logTextArea;
+    private static SimpleDateFormat _dateFormat;
     private final JButton _switchButton;
 
     public ServerFrame() {
@@ -26,6 +28,9 @@ public class ServerFrame extends JFrame {
         _logTextArea.setLineWrap(true);
         _logTextArea.setWrapStyleWord(true);
         _logTextArea.setEditable(false);
+        ((DefaultCaret) _logTextArea.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        _dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
         _switchButton = new JButton("Turn Off Server");
         _switchButton.addActionListener(e -> {
@@ -45,8 +50,7 @@ public class ServerFrame extends JFrame {
     }
 
     public static void addLog(String text) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String log = String.format("[ %s ] : %s\n", simpleDateFormat.format(new Date()), text);
+        String log = String.format("[ %s ] : %s\n", _dateFormat.format(new Date()), text);
 
         _logTextArea.append(log);
     }
