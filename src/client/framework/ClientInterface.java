@@ -1,11 +1,13 @@
 package client.framework;
 
+import server.framework.Message;
+
 public interface ClientInterface {
     void unknownHost();
 
     void couldNotConnect();
 
-    Object receivedInput(Object data);
+    Message<?> receivedInput(Message<?> data);
 
     void serverClosed();
 

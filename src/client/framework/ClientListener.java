@@ -1,5 +1,7 @@
 package client.framework;
 
+import server.framework.Message;
+
 public class ClientListener implements ClientInterface {
 
     @Override
@@ -13,7 +15,7 @@ public class ClientListener implements ClientInterface {
     }
 
     @Override
-    public Object receivedInput(Object data) {
+    public Message<?> receivedInput(Message<?> data) {
         return data;
     }
 
