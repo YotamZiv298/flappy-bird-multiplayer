@@ -1,5 +1,6 @@
 package state.game;
 
+import audio.Audio;
 import framework.Keyboard;
 import framework.Render;
 import main.Main;
@@ -101,18 +102,6 @@ public class Game {
             }
         }
         _bird = new Bird();
-
-        if (_pipes != null) {
-            for (Pipe pipe : _pipes) {
-                pipe.setAlive(false);
-
-                try {
-                    pipe.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
         _pipes = new ArrayList<>();
     }
 
@@ -121,8 +110,6 @@ public class Game {
 
         if (!_started)
             return;
-
-//        resetEvent();
 
         if ((_bird.getState() == Thread.State.NEW) && !_bird.isAlive()) {
             _bird.start();
@@ -148,72 +135,61 @@ public class Game {
             Pipe northPipe = null;
             Pipe southPipe = null;
 
-            // Look for pipes off the screen
             for (Pipe pipe : _pipes) {
                 if (pipe.getX() - pipe.getWidth() < 0) {
                     if (northPipe == null) {
                         northPipe = pipe;
-                    } else {
+                    } else if (southPipe == null) {
                         southPipe = pipe;
                         break;
                     }
                 }
             }
 
-            if (northPipe != null) {
-                northPipe.setAlive(false);
-
-                try {
-                    northPipe.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (northPipe == null) {
+                Pipe pipe = new Pipe("north");
+                _pipes.add(pipe);
+                northPipe = pipe;
+            } else {
+                northPipe.reset();
             }
 
-            northPipe = new Pipe("north");
-            _pipes.add(northPipe);
-
-            if (southPipe != null) {
-                southPipe.setAlive(false);
-
-                try {
-                    southPipe.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (southPipe == null) {
+                Pipe pipe = new Pipe("south");
+                _pipes.add(pipe);
+                southPipe = pipe;
+            } else {
+                southPipe.reset();
             }
-
-            southPipe = new Pipe("south");
-            _pipes.add(southPipe);
 
             northPipe.setY(southPipe.getY() + southPipe.getHeight() + 175);
         }
 
         for (Pipe pipe : _pipes) {
-            if (pipe.getState() == Thread.State.TERMINATED)
-                continue;
-            if (!pipe.isAlive()) {
-                pipe.start();
-            }
+            pipe.update();
         }
     }
 
     public void checkCollisions() {
-        if (_bird.getY() + _bird.getHeight() > Main.FRAME_HEIGHT - 80 || _bird.getY() <= 0) {
-            _gameOver = true;
-            _bird.setY(_bird.getY());
-            _bird.setAlive(false);
-        }
-
         for (Pipe pipe : _pipes) {
             if (pipe.collides(_bird.getX(), _bird.getY(), _bird.getWidth(), _bird.getHeight())) {
                 _gameOver = true;
                 _bird.setAlive(false);
 
-                return;
+                Audio.play(Audio.DIE);
             } else if (pipe.getX() == _bird.getX() && pipe.getOrientation().equalsIgnoreCase("south")) {
+                System.out.println("scored");
                 _score++;
+
+                Audio.play(Audio.POINT);
             }
+        }
+
+        if (_bird.getY() + _bird.getHeight() > Main.FRAME_HEIGHT - 80 || _bird.getY() <= 0) {
+            _gameOver = true;
+            _bird.setAlive(false);
+
+            Audio.play(Audio.DIE);
         }
     }
 
@@ -221,8 +197,11 @@ public class Game {
         ArrayList<Render> renders = new ArrayList<>();
 
         renders.add(new Render(0, 0, _BACKGROUND_PATH));
-        for (Pipe pipe : _pipes)
-            renders.add(pipe.getRender());
+        if (_pipes != null) {
+            for (Pipe pipe : _pipes) {
+                renders.add(pipe.getRender());
+            }
+        }
         renders.add(new Render(0, 0, _FOREGROUND_PATH));
         renders.add(_bird.getRender());
 
@@ -234,11 +213,5 @@ public class Game {
             _started = true;
         }
     }
-
-//    public void resetEvent() {
-//        if (_keyboard.isDown(KeyEvent.VK_R)) {
-//            restart();
-//        }
-//    }
 
 }

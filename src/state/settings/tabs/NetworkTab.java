@@ -1,15 +1,12 @@
 package state.settings.tabs;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
+import main.Main;
+import main.resources.Globals;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
-import main.Main;
+import java.util.ArrayList;
 
 public class NetworkTab extends JPanel {
 
@@ -18,26 +15,16 @@ public class NetworkTab extends JPanel {
 
     protected ArrayList<JTextField> _fields;
 
-
-    protected JButton _saveButton;
-
-    protected ArrayList<JButton> _buttons;
-
     public NetworkTab() {
-        String address = null;
-        try {
-            address = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-
-        _addressField = new JTextField(address);
-        _addressField.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 2 + 2 * 40, 150, 40);
+        _addressField = new JTextField(Globals.getProperty(Globals.IP_ADDRESS));
+        _addressField.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 2 + 4 * 40, 150, 40);
         _addressField.setColumns(11);
+        _addressField.setEnabled(false);
 
-        _portField = new JTextField("0");
-        _portField.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 2 + 4 * 40, 150, 40);
+        _portField = new JTextField(Globals.getProperty(Globals.PORT));
+        _portField.setBounds(Main.FRAME_WIDTH / 2 - Main.FRAME_WIDTH / 6, Main.FRAME_HEIGHT / 2 + 6 * 40, 150, 40);
         _portField.setColumns(4);
+        _portField.setEnabled(false);
 
         _fields = new ArrayList<>();
         _fields.add(_addressField);
@@ -46,16 +33,6 @@ public class NetworkTab extends JPanel {
         for (JTextField field : _fields) {
             field.setFocusable(true);
             add(field);
-        }
-
-        _saveButton = new JButton("Save");
-
-        _buttons = new ArrayList<>();
-        _buttons.add(_saveButton);
-
-        for (JButton button : _buttons) {
-            button.setFocusable(false);
-            add(button);
         }
 
         setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Network"));

@@ -1,22 +1,19 @@
 package state.settings.tabs;
 
-import main.resources.OSDetector;
+import main.FlappyBirdMultiplayer;
 
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 public class AboutTab extends JPanel {
 
-    protected final String _GAME_IMAGE_PATH =
-            OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
     protected Image _gameImage;
 
     protected JLabel _copyrightLabel;
@@ -25,7 +22,7 @@ public class AboutTab extends JPanel {
         setLayout(new BorderLayout());
 
         try {
-            _gameImage = ImageIO.read(new File(_GAME_IMAGE_PATH));
+            _gameImage = ImageIO.read(new File(FlappyBirdMultiplayer.GAME_LOGO));
         } catch (IOException e) {
             e.printStackTrace();
         }

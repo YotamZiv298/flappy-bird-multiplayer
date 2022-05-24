@@ -47,4 +47,8 @@ public class Keyboard implements KeyListener {
         return false;
     }
 
+    public boolean isDigit(char key) {
+        return key >= '0' && key <= '9';
+    }
+
 }

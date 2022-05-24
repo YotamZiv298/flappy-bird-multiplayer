@@ -1,23 +1,33 @@
 package main;
 
-import java.awt.CardLayout;
-import java.awt.Dimension;
+import client.Client;
+import client.framework.ClientListener;
+import framework.ConnectionDisplay;
+import framework.Keyboard;
+import main.resources.Globals;
+import main.resources.OSDetector;
+import state.MainMenu;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import framework.Keyboard;
-import state.MainMenu;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.util.Random;
 
 public class FlappyBirdMultiplayer extends JFrame {
 
+    private static final Random random = new Random();
     public static CardLayout appCardLayout;
     public static JPanel appPanelContainer;
 
-    private MainMenu _mainMenu;
-//    private GamePanel _gamePanel;
+    public static Client client;
+    public static ConnectionDisplay connectionDisplay;
 
-//    protected ArrayList<JPanel> _panels;
+    public static String playerName = "Player" + String.format("%06d", random.nextInt(999999));
+
+    public static final String GAME_LOGO = OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
 
     public FlappyBirdMultiplayer() {
         super("Flappy Bird Multiplayer");
@@ -25,25 +35,21 @@ public class FlappyBirdMultiplayer extends JFrame {
         appCardLayout = new CardLayout();
         appPanelContainer = new JPanel(appCardLayout);
 
-//        _mainMenu = new MainMenu();
-//        _gamePanel = new GamePanel();
+        ClientListener clientListener = new ClientListener();
+        client = new Client(Globals.getProperty(Globals.IP_ADDRESS), Integer.parseInt(Globals.getProperty(Globals.PORT)), clientListener);
+
+        connectionDisplay = new ConnectionDisplay();
+        connectionDisplay.setPreferredSize(new Dimension(0, 10));
 
         appPanelContainer.add(new MainMenu(), MainMenu.class.getSimpleName());
-//        appPanelContainer.add(_gamePanel, GamePanel.class.getSimpleName());
 
         appCardLayout.show(appPanelContainer, MainMenu.class.getSimpleName());
 
-//        _panels = new ArrayList<>();
-//        _panels.add(_mainMenu);
-//        _panels.add(_gamePanel);
+        add(connectionDisplay, BorderLayout.PAGE_START);
+        add(appPanelContainer, BorderLayout.CENTER);
 
-
-//        for (JPanel panel : _panels) {
-//            add(panel);
-//        }
-
-        add(appPanelContainer);
-
+        setIconImage(new ImageIcon(GAME_LOGO).getImage());
+        setFocusable(true);
         addKeyListener(Keyboard.getInstance());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(Main.FRAME_WIDTH, Main.FRAME_HEIGHT));

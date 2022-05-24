@@ -11,17 +11,18 @@ import javax.swing.JTabbedPane;
 
 import main.Main;
 import state.settings.tabs.AboutTab;
-import state.settings.tabs.GeneralTab;
+import state.settings.tabs.ControlsTab;
 import state.settings.tabs.NetworkTab;
 
 public class Settings extends JDialog {
 
-    protected GeneralTab _generalPanel;
+    protected ControlsTab _controlsPanel;
     protected NetworkTab _networkPanel;
     protected AboutTab _aboutPanel;
 
     public Settings() {
         setTitle("Settings");
+        setModal(true);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setFocusable(false);
@@ -45,11 +46,11 @@ public class Settings extends JDialog {
     public Map<String, JPanel> initPanels() {
         Map<String, JPanel> components = new LinkedHashMap<>();
 
-        _generalPanel = new GeneralTab();
+        _controlsPanel = new ControlsTab();
         _networkPanel = new NetworkTab();
         _aboutPanel = new AboutTab();
 
-        components.put("General", _generalPanel);
+        components.put("Game Controls", _controlsPanel);
         components.put("Network", _networkPanel);
         components.put("About", _aboutPanel);
 

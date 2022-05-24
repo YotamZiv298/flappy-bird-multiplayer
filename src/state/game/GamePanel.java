@@ -1,10 +1,11 @@
 package state.game;
 
+import database.tables.leaderboard.PlayerData;
 import framework.Render;
 import main.FlappyBirdMultiplayer;
+import server.framework.Message;
 
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -14,20 +15,20 @@ public class GamePanel extends JPanel implements Runnable {
 
     protected Game _game;
 
-    protected Timer _fpsTimer;
-    protected final int _FRAMES_PER_SECOND = 60;
+    protected int _speed;
 
-    public GamePanel() {
+    public GamePanel(boolean extremeModeActive) {
         _game = new Game();
 
-        _fpsTimer = new Timer(1000 / _FRAMES_PER_SECOND, e -> {
-            if (e.getSource() == _fpsTimer)
-                repaint();
-        });
+        _speed = extremeModeActive ? 9 : 25;
 
         new Thread(this).start();
+    }
 
-        _fpsTimer.start();
+    public void update() {
+        _game.update();
+
+        repaint();
     }
 
     @Override
@@ -44,26 +45,28 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2D.setColor(Color.BLACK);
 
-        if (!_game.hasStarted()) {
-            g2D.setFont(new Font("TimesRoman", Font.PLAIN, 20));
-            g2D.drawString("Press SPACE to start", 150, 240);
-        } else {
-            g2D.setFont(new Font("TimesRoman", Font.PLAIN, 24));
+        if (_game.hasStarted()) {
+            g2D.setFont(new Font("TimesRoman", Font.BOLD, 24));
             g2D.drawString(Integer.toString(_game.getScore()), 10, 465);
+        } else {
+            g2D.setFont(new Font("TimesRoman", Font.BOLD, 20));
+            g2D.drawString("Press SPACE to start", 150, 240);
         }
-
-//        if (_game.isGameOver()) {
-//            g2D.setFont(new Font("TimesRoman", Font.PLAIN, 20));
-//            g2D.drawString("Press R to restart", 150, 240);
-//        }
     }
 
     @Override
     public void run() {
         while (true) {
-            _game.update();
+            update();
 
             if (_game.isGameOver()) {
+                PlayerData playerData = new PlayerData();
+                playerData.setName(FlappyBirdMultiplayer.playerName);
+                playerData.setScore(_game.getScore());
+
+                FlappyBirdMultiplayer.client.send(new Message<>(Message.RequestCode.SET_PLAYER_SCORE, playerData));
+                Message<?> data = FlappyBirdMultiplayer.client.getData(Message.RequestCode.SET_PLAYER_SCORE);
+
                 Results results = new Results(1, _game.getScore());
                 String name = Results.class.getSimpleName();
 
@@ -74,10 +77,8 @@ public class GamePanel extends JPanel implements Runnable {
                 break;
             }
 
-            repaint();
-
             try {
-                Thread.sleep(25);
+                Thread.sleep(_speed);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
