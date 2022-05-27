@@ -15,8 +15,6 @@ public class Client {
     private ObjectOutputStream _out;
     private ObjectInputStream _in;
     private Message<?> _received;
-//    private BufferedReader _in;
-//    private PrintWriter _out;
 
     private ClientInterface _clientListener;
     private boolean _open;
@@ -30,10 +28,6 @@ public class Client {
             _socket = new Socket(ip, port);
             _out = new ObjectOutputStream(_socket.getOutputStream());
             _in = new ObjectInputStream(_socket.getInputStream());
-//            _out = new ObjectOutputStream(new BufferedOutputStream(_socket.getOutputStream()));
-//            _in = new ObjectInputStream(new BufferedInputStream(_socket.getInputStream()));
-//            _in = new BufferedReader(new InputStreamReader(_socket.getInputStream()));
-//            _out = new PrintWriter(_socket.getOutputStream(), true);
 
             Thread clientThread = new Thread(() -> {
                 while (_open) {
@@ -149,15 +143,6 @@ public class Client {
         }
     }
 
-//    private Message<?> received() {
-//        return _received;
-////        Message<?> received = (Message<?>) _received;
-////
-////        _received = null;
-////
-////        return received;
-//    }
-
     public synchronized Message<?> getData(Message.RequestCode expectedCode) {
         try {
             Thread.sleep(10);
@@ -183,15 +168,6 @@ public class Client {
         }
 
         _received = null;
-
-//        for (int i = 0; data == null || data.getRequestCode() != expectedCode; i++) {
-//            if (i != 10000) continue;
-//
-//            data = _received;
-//            i = 0;
-//
-//            if (System.currentTimeMillis() > startTime + 5000) return null;
-//        }
 
         return data;
     }

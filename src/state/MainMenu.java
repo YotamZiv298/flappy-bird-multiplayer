@@ -34,7 +34,7 @@ public class MainMenu extends JPanel {
     private final JButton _settingsButton;
     private final JButton _exitButton;
 
-    protected ArrayList<JButton> _buttons;
+    protected final ArrayList<JButton> _buttons;
 
     public MainMenu() {
         setLayout(null);
@@ -98,14 +98,6 @@ public class MainMenu extends JPanel {
         }
 
         _startButton.addActionListener(e -> {
-//            EnterGamePanel enterGamePanel = new EnterGamePanel();
-//            String name = EnterGamePanel.class.getSimpleName();
-//
-//            FlappyBirdMultiplayer.appPanelContainer.add(enterGamePanel, name);
-//            FlappyBirdMultiplayer.appCardLayout.show(FlappyBirdMultiplayer.appPanelContainer, name);
-//
-//            FlappyBirdMultiplayer.appPanelContainer.remove(MainMenu.this);
-
             GamePanel gamePanel = new GamePanel(false);
             String name = GamePanel.class.getSimpleName();
 
@@ -135,10 +127,6 @@ public class MainMenu extends JPanel {
         for (JButton button : _buttons) {
             add(button);
         }
-//        add(_startButton);
-//        add(_leaderboardButton);
-//        add(_settingsButton);
-//        add(_exitButton);
     }
 
     public static JButton getStartButton() {
