@@ -1,12 +1,13 @@
 package main.resources;
 
 public class OSDetector {
-    private static boolean isWindows = false;
-    private static boolean isLinux = false;
-    private static boolean isMac = false;
+    private static final boolean isWindows;
+    private static final boolean isLinux;
+    private static final boolean isMac;
 
     static {
         String os = System.getProperty("os.name").toLowerCase();
+
         isWindows = os.contains("win");
         isLinux = os.contains("nux") || os.contains("nix");
         isMac = os.contains("mac");

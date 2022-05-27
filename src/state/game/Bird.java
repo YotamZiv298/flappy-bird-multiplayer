@@ -21,7 +21,7 @@ public class Bird extends Thread {
     protected boolean _alive;
 
     protected double _velY;
-    protected double _gravity;
+    protected final double _gravity;
 
     protected int _jumpDelay;
     protected double _rotation;
@@ -30,9 +30,7 @@ public class Bird extends Thread {
             OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
     protected Image _image;
 
-    protected Keyboard _keyboard;
-
-    private final int _REFRESH_RATE = 25;
+    protected final Keyboard _keyboard;
 
     public Bird() {
         _x = 100;
@@ -137,7 +135,7 @@ public class Bird extends Thread {
             _y += (int) _velY;
 
             try {
-                Thread.sleep(_REFRESH_RATE);
+                Thread.sleep(25);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

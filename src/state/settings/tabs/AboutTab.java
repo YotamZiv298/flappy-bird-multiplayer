@@ -16,7 +16,7 @@ public class AboutTab extends JPanel {
 
     protected Image _gameImage;
 
-    protected JLabel _copyrightLabel;
+    protected final JLabel _copyrightLabel;
 
     public AboutTab() {
         setLayout(new BorderLayout());

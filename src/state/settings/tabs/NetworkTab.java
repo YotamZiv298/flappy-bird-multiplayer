@@ -10,10 +10,10 @@ import java.util.ArrayList;
 
 public class NetworkTab extends JPanel {
 
-    protected JTextField _addressField;
-    protected JTextField _portField;
+    protected final JTextField _addressField;
+    protected final JTextField _portField;
 
-    protected ArrayList<JTextField> _fields;
+    protected final ArrayList<JTextField> _fields;
 
     public NetworkTab() {
         _addressField = new JTextField(Globals.getProperty(Globals.IP_ADDRESS));

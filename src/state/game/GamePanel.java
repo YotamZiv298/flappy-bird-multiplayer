@@ -13,9 +13,9 @@ import java.awt.Graphics2D;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    protected Game _game;
+    protected final Game _game;
 
-    protected int _speed;
+    protected final int _speed;
 
     public GamePanel(boolean extremeModeActive) {
         _game = new Game();

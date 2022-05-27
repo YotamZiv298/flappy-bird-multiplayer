@@ -25,7 +25,7 @@ public class FlappyBirdMultiplayer extends JFrame {
     public static Client client;
     public static ConnectionDisplay connectionDisplay;
 
-    public static String playerName = "Player" + String.format("%06d", random.nextInt(999999));
+    public static final String playerName = "Player" + String.format("%06d", random.nextInt(999999));
 
     public static final String GAME_LOGO = OSDetector.isWindows() ? "src\\images\\bird.png" : "src/images/bird.png";
 
